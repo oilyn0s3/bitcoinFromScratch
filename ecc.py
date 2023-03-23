@@ -74,9 +74,18 @@ class Point:
         if self.a != other.a or self.b != other.b:
             raise ValueError(
                 'Points {}, {} are not on the same curve.'.format(self, other))
-            
-        if self.x is None:
+
+        if self.x is None: # when x1 is infinity, return the other i.e. x2
             return other
-        
-        if other.x is None:
+
+        if other.x is None: # when x2 is infinity, return the self i.e. x1
             return self
+        
+        if self.x == other.x and self.y != other.y: # wehn x1 = x2
+            return self.__class__(None, None, self.a, self.b)
+        
+        if self.x != other.x and self.y == other.y: # when x1 != x2
+            s = (other.y - self.y) / (other.x - self.x)
+            x = s**2 - self.x - other.x
+            y = s * ( self.x - x) - self.y
+            return self.__class__(x, y, self.a, self.b)
